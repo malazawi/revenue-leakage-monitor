@@ -63,6 +63,12 @@ Every weekday morning, the agent:
 
 ![Example client draft](images/client-draft.png)
 
+<details><summary><b>Daily summary email</b> (what the AR lead receives each morning)</summary>
+
+![Daily summary](images/daily-summary.png)
+
+</details>
+
 ### Guardrails
 - **Human in the loop:** drafts only; the workflow never sends to clients.
 - **Facts only:** the AI is told to use only the invoice data provided and never invent amounts, dates or consequences. No threats or legal language.
