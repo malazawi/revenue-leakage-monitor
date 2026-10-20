@@ -4,7 +4,7 @@
 
 Most dashboards stop at "here's the problem." This project goes one step further: the dashboard finds the leakage, and the agent works the receivables queue, drafting the follow-ups a collections team would otherwise write by hand.
 
-![Dashboard](images/dashboard.png)
+![Dashboard](Images/dashboard.png)
 
 ---
 
@@ -47,7 +47,7 @@ Payments taking 14+ days to apply jumped from about $0.15M in a normal month to 
 
 ## Part 2: n8n Collections Agent
 
-![Workflow](images/n8n-workflow.png)
+![Workflow](Images/n8n-workflow.png)
 
 Every weekday morning, the agent:
 1. **Reads** the AR aging report and the outreach log from Google Sheets.
@@ -61,11 +61,11 @@ Every weekday morning, the agent:
 
 **Example run:** 1,184 open invoices scanned → 149 eligible → 86 clients → 10 client drafts + 15 partner notes covering 58 clients ($2.05M). Running it again the same day correctly skipped everyone already contacted and moved on to the next 10 clients.
 
-![Example client draft](images/client-draft.png)
+![Example client draft](Images/client-draft.png)
 
 <details><summary><b>Daily summary email</b> (what the AR lead receives each morning)</summary>
 
-![Daily summary](images/daily-summary.png)
+![Daily summary](Images/daily-summary.png)
 
 </details>
 
@@ -87,7 +87,7 @@ docs/business_rules.md                    ← rules for the dashboard and the ag
 docs/data_dictionary.md                   ← every table and column
 data/                                     ← synthetic CSVs
 scripts/                                  ← data generator
-images/                                   ← screenshots
+Images/                                   ← screenshots
 ```
 
 ## Run it yourself
