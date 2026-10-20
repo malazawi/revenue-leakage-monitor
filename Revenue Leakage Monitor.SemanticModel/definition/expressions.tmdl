@@ -1,0 +1,6 @@
+/// Folder that contains the CSV files. Change this to wherever you saved /data.
+expression DataFolder = "C:\portfolio\revenue-leakage-monitor\data\" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 9453043d-60de-46e8-aa3e-34b7572fa92c
+
+	annotation PBI_ResultType = Text
+

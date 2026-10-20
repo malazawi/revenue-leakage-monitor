@@ -1,0 +1,152 @@
+table _Measures
+	lineageTag: 322444b5-bc3c-42ec-9c1a-65504ee37de2
+
+	/// Snapshot date of the data (latest time entry).
+	measure 'As Of Date' = CALCULATE ( MAX ( time_entries[entry_date] ), REMOVEFILTERS () )
+		formatString: mmm d, yyyy
+		displayFolder: 0 Snapshot
+		lineageTag: 61725fbc-79f3-441e-a2bb-f09c6f098f51
+
+	/// Hours worked.
+	measure Hours = SUM ( time_entries[hours] )
+		formatString: #,0
+		displayFolder: 1 Time Entry
+		lineageTag: a8c6db02-2a19-421e-833a-6ed275a219a7
+
+	/// Share of hours entered 8+ days after the work date.
+	measure 'Late Hours %' = DIVIDE ( CALCULATE ( [Hours], time_entries[entry_lag_days] >= 8 ), [Hours] )
+		formatString: 0.0%
+		displayFolder: 1 Time Entry
+		lineageTag: 6cc085b4-22bf-4e9b-9d10-c2970a2accb9
+
+	/// Share of hours entered 30+ days after the work date.
+	measure 'Very Late Hours %' = DIVIDE ( CALCULATE ( [Hours], time_entries[entry_lag_days] >= 30 ), [Hours] )
+		formatString: 0.0%
+		displayFolder: 1 Time Entry
+		lineageTag: 0a35c545-e576-40e3-9254-c1ecba8dc3df
+
+	/// Average days between doing the work and entering the time.
+	measure 'Avg Entry Lag (Days)' = AVERAGE ( time_entries[entry_lag_days] )
+		formatString: 0.0
+		displayFolder: 1 Time Entry
+		lineageTag: fd1e8e11-9964-4285-bcea-a9776e94ed0c
+
+	/// Standard value (hours x standard rate) of time that has been billed.
+	measure 'Standard Value Billed' = CALCULATE ( SUM ( time_entries[standard_value] ), NOT ISBLANK ( time_entries[invoice_id] ) )
+		formatString: \$#,0
+		displayFolder: 2 Realization
+		lineageTag: a77cb1ca-9e4e-4d6f-8c3c-c5dbf9a8d576
+
+	/// Amount actually billed for that time.
+	measure 'Billed Value' = SUM ( time_entries[billed_value] )
+		formatString: \$#,0
+		displayFolder: 2 Realization
+		lineageTag: fa464e0f-c21e-4f0f-8b07-5b793419c9d5
+
+	/// Billed value / standard value of billed time.
+	measure 'Billing Realization' = DIVIDE ( [Billed Value], [Standard Value Billed] )
+		formatString: 0.0%
+		displayFolder: 2 Realization
+		lineageTag: b154e9a4-f145-4291-b678-75fbf879e8b5
+
+	/// Standard value that was discounted or written down at billing.
+	measure 'Realization Leakage' = [Standard Value Billed] - [Billed Value]
+		formatString: \$#,0
+		displayFolder: 2 Realization
+		lineageTag: 7b4db562-f4c3-428d-b465-1c30fedc5163
+
+	/// Contractual discounts the firm agreed to up front - a pricing decision, not leakage.
+	measure 'Agreed Discounts' =
+			SUMX (
+			    FILTER ( time_entries, NOT ISBLANK ( time_entries[invoice_id] ) ),
+			    time_entries[standard_value] * RELATED ( engagements[agreed_discount_pct] )
+			)
+		formatString: \$#,0
+		displayFolder: 2 Realization
+		lineageTag: 6056f659-4b5b-4720-9758-123dd2bc0927
+
+	/// Value written down at billing beyond the agreed discount - the true billing leakage.
+	measure Write-downs = [Standard Value Billed] - [Agreed Discounts] - [Billed Value]
+		formatString: \$#,0
+		displayFolder: 2 Realization
+		lineageTag: 99132aa4-f9dc-4064-a0f0-88c072cba323
+
+	/// Standard value of work done but not yet billed.
+	measure 'Unbilled WIP' = CALCULATE ( SUM ( time_entries[standard_value] ), ISBLANK ( time_entries[invoice_id] ) )
+		formatString: \$#,0
+		displayFolder: 3 WIP
+		lineageTag: 70e1fc73-358c-4570-944f-24b81a50c475
+
+	/// Unbilled work more than 90 days old - at high risk of write-down.
+	measure 'Aged WIP 90+' = CALCULATE ( [Unbilled WIP], time_entries[WIP Age Days] > 90 )
+		formatString: \$#,0
+		displayFolder: 3 WIP
+		lineageTag: a1fcfd59-1e3b-4e95-8bba-d5f30569148f
+
+	/// Unpaid invoice balances as of the snapshot date.
+	measure 'Open AR' = SUM ( invoices[balance] )
+		formatString: \$#,0
+		displayFolder: 4 Receivables
+		lineageTag: d46159bf-ba08-495a-8144-50064f27bc6a
+
+	/// Open AR more than 90 days from invoice date.
+	measure 'AR 90+' = CALCULATE ( [Open AR], invoices[Days Outstanding] > 90 )
+		formatString: \$#,0
+		displayFolder: 4 Receivables
+		lineageTag: 7f7383b3-2264-4173-94c3-8430ee8f18d4
+
+	/// Share of open AR that is 90+ days old.
+	measure 'AR 90+ %' = DIVIDE ( [AR 90+], [Open AR] )
+		formatString: 0.0%
+		displayFolder: 4 Receivables
+		lineageTag: 344300ea-1f0d-418d-b5d3-d49cc476c15b
+
+	/// Invoiced amount.
+	measure Billed = SUM ( invoices[invoice_amount] )
+		formatString: \$#,0
+		displayFolder: 4 Receivables
+		lineageTag: d0f28e67-0fa7-43e6-98c2-5f26f87bf42a
+
+	/// Bad-debt write-offs (invoices written off after ~1 year unpaid).
+	measure Write-offs = SUM ( invoices[write_off_amount] )
+		formatString: \$#,0
+		displayFolder: 4 Receivables
+		lineageTag: e5b07ed5-63f3-483b-819d-920b1b328a9c
+
+	/// Payments received.
+	measure 'Cash Received' = SUM ( payments[amount] )
+		formatString: \$#,0
+		displayFolder: 4 Receivables
+		lineageTag: 6a6e95c2-4b1c-4e85-8806-c6247ce5abfd
+
+	/// Payments received but not yet matched to an invoice.
+	measure 'Unapplied Cash' = CALCULATE ( [Cash Received], ISBLANK ( payments[applied_date] ) )
+		formatString: \$#,0
+		displayFolder: 5 Cash Application
+		lineageTag: a4369580-85e0-47aa-8637-c5c97bf97634
+
+	/// Payments still unmatched more than 14 days after receipt.
+	measure 'Unapplied Cash 14+ Days' = CALCULATE ( [Cash Received], ISBLANK ( payments[applied_date] ), payments[Days To Apply] > 14 )
+		formatString: \$#,0
+		displayFolder: 5 Cash Application
+		lineageTag: ee034f5b-de96-4f74-9728-09f536de4455
+
+	/// Payments that took more than 14 days to apply, or are still unapplied after 14 days - by month received.
+	measure 'Slow-Applied Cash' = CALCULATE ( [Cash Received], payments[Days To Apply] > 14 )
+		formatString: \$#,0
+		displayFolder: 5 Cash Application
+		lineageTag: b7a373e4-21a4-4ed9-bff7-f0cf3606f3fd
+
+	column Value
+		isHidden
+		lineageTag: eee17b94-bf41-44e3-89dd-97d5665b501e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = { BLANK () }
+

@@ -1,0 +1,40 @@
+relationship 1f42a645-383f-4371-af49-566f7d25f0d0
+	fromColumn: time_entries.staff_id
+	toColumn: staff.staff_id
+
+relationship 9c0e564c-cc9c-40bb-9a6a-c9cb3bd1f8d3
+	fromColumn: time_entries.engagement_id
+	toColumn: engagements.engagement_id
+
+relationship dbb85e9f-8263-4fce-a818-bac7f8a6dfb3
+	fromColumn: engagements.client_id
+	toColumn: clients.client_id
+
+relationship 0e565e15-97ec-42bf-822c-477782ee0926
+	fromColumn: invoices.engagement_id
+	toColumn: engagements.engagement_id
+
+relationship 70ec90ee-699f-4695-a463-da1346478082
+	fromColumn: payments.client_id
+	toColumn: clients.client_id
+
+relationship a70befb7-7713-487f-abbd-ef426d9136db
+	fromColumn: collections_log.invoice_id
+	toColumn: invoices.invoice_id
+
+relationship 9c0a38a4-be4d-49c2-9cf2-76504739399a
+	fromColumn: ar_exceptions.invoice_id
+	toColumn: invoices.invoice_id
+
+relationship 2f5f2334-ed84-425b-958a-d18af135939b
+	fromColumn: time_entries.work_date
+	toColumn: Date.Date
+
+relationship 5e8c4b68-fb24-4934-a7b3-2571be0c217b
+	fromColumn: invoices.invoice_date
+	toColumn: Date.Date
+
+relationship 56046f11-7b1e-4134-87c0-962113d75e6e
+	fromColumn: payments.received_date
+	toColumn: Date.Date
+

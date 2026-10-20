@@ -1,0 +1,71 @@
+table collections_log
+	lineageTag: 4e5baf00-608f-47db-8dd2-4c9818ae0dda
+
+	column contact_id
+		dataType: string
+		lineageTag: 04bf88bb-3094-411f-8ff5-976ec2120363
+		summarizeBy: none
+		sourceColumn: contact_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column invoice_id
+		dataType: string
+		lineageTag: 6fff398c-f64f-40fd-b64e-841da9bc7eeb
+		summarizeBy: none
+		sourceColumn: invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column contact_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 65404941-d8af-4900-b560-ceaea36ca9ba
+		summarizeBy: none
+		sourceColumn: contact_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column method
+		dataType: string
+		lineageTag: d8117269-f51c-4f61-9eff-e2662f3b1eea
+		summarizeBy: none
+		sourceColumn: method
+
+		annotation SummarizationSetBy = Automatic
+
+	column outcome
+		dataType: string
+		lineageTag: cfac047a-1cd9-419c-8f95-3104f987b4d5
+		summarizeBy: none
+		sourceColumn: outcome
+
+		annotation SummarizationSetBy = Automatic
+
+	column promised_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 3e17c349-576a-42ec-a2e6-9ba276b346be
+		summarizeBy: none
+		sourceColumn: promised_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition collections_log = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "collections_log.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"contact_id", type text}, {"invoice_id", type text}, {"contact_date", type date}, {"method", type text}, {"outcome", type text}, {"promised_date", type date}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

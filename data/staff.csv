@@ -1,0 +1,151 @@
+staff_id,staff_name,email,title,office,practice,standard_rate,monthly_target_hours
+ST001,Danielle Johnson,danielle.johnson@brightwater-advisory.example.com,Partner,Charlotte,Operations Excellence,820,110
+ST002,Joshua Walker,joshua.walker@brightwater-advisory.example.com,Partner,Minneapolis,Operations Excellence,845,110
+ST003,Jill Rhodes,jill.rhodes@brightwater-advisory.example.com,Partner,Columbus,Operations Excellence,675,110
+ST004,Patricia Miller,patricia.miller@brightwater-advisory.example.com,Partner,Charlotte,Finance Transformation,835,110
+ST005,Robert Johnson,robert.johnson@brightwater-advisory.example.com,Partner,Columbus,Operations Excellence,735,110
+ST006,Jeffery Wagner,jeffery.wagner@brightwater-advisory.example.com,Partner,Charlotte,Transactions,660,110
+ST007,Anthony Gonzalez,anthony.gonzalez@brightwater-advisory.example.com,Partner,Phoenix,Finance Transformation,800,110
+ST008,Debra Gardner,debra.gardner@brightwater-advisory.example.com,Partner,Salt Lake City,Operations Excellence,825,110
+ST009,Jeffrey Lawrence,jeffrey.lawrence@brightwater-advisory.example.com,Partner,Minneapolis,Risk & Compliance,740,110
+ST010,Lisa Smith,lisa.smith@brightwater-advisory.example.com,Partner,Minneapolis,Technology Advisory,785,110
+ST011,Linda Wolfe,linda.wolfe@brightwater-advisory.example.com,Partner,Salt Lake City,Operations Excellence,715,110
+ST012,Matthew Moore,matthew.moore@brightwater-advisory.example.com,Partner,Charlotte,Technology Advisory,685,110
+ST013,Susan Rogers,susan.rogers@brightwater-advisory.example.com,Partner,Charlotte,Risk & Compliance,695,110
+ST014,Christopher Davis,christopher.davis@brightwater-advisory.example.com,Partner,Charlotte,Finance Transformation,815,110
+ST015,Melanie Munoz,melanie.munoz@brightwater-advisory.example.com,Partner,Minneapolis,Technology Advisory,815,110
+ST016,Lindsay Blair,lindsay.blair@brightwater-advisory.example.com,Director,Charlotte,Transactions,525,125
+ST017,Amanda Dudley,amanda.dudley@brightwater-advisory.example.com,Director,Minneapolis,Transactions,520,125
+ST018,Nicholas Arnold,nicholas.arnold@brightwater-advisory.example.com,Director,Columbus,Technology Advisory,565,125
+ST019,Maria Montgomery,maria.montgomery@brightwater-advisory.example.com,Director,Columbus,Operations Excellence,545,125
+ST020,Michelle Ray,michelle.ray@brightwater-advisory.example.com,Director,Minneapolis,Risk & Compliance,510,125
+ST021,Janet Williams,janet.williams@brightwater-advisory.example.com,Director,Charlotte,Transactions,555,125
+ST022,Jeremy Roberts,jeremy.roberts@brightwater-advisory.example.com,Director,Phoenix,Operations Excellence,555,125
+ST023,Christopher Hall,christopher.hall@brightwater-advisory.example.com,Director,Minneapolis,Technology Advisory,500,125
+ST024,Craig Ramirez,craig.ramirez@brightwater-advisory.example.com,Director,Minneapolis,Risk & Compliance,540,125
+ST025,Cynthia Diaz,cynthia.diaz@brightwater-advisory.example.com,Director,Minneapolis,Transactions,505,125
+ST026,Mitchell Clark,mitchell.clark@brightwater-advisory.example.com,Director,Minneapolis,Operations Excellence,565,125
+ST027,Joseph Zuniga,joseph.zuniga@brightwater-advisory.example.com,Director,Columbus,Transactions,565,125
+ST028,Deborah Lynch,deborah.lynch@brightwater-advisory.example.com,Director,Columbus,Risk & Compliance,515,125
+ST029,George Daniel,george.daniel@brightwater-advisory.example.com,Director,Minneapolis,Technology Advisory,570,125
+ST030,Frank Gray,frank.gray@brightwater-advisory.example.com,Director,Minneapolis,Transactions,550,125
+ST031,Veronica Bowman,veronica.bowman@brightwater-advisory.example.com,Senior Manager,Phoenix,Operations Excellence,435,135
+ST032,Angela Cohen,angela.cohen@brightwater-advisory.example.com,Senior Manager,Minneapolis,Technology Advisory,450,135
+ST033,Megan Parsons,megan.parsons@brightwater-advisory.example.com,Senior Manager,Minneapolis,Risk & Compliance,405,135
+ST034,Jeremy Johnson,jeremy.johnson@brightwater-advisory.example.com,Senior Manager,Salt Lake City,Operations Excellence,455,135
+ST035,Leslie Adams,leslie.adams@brightwater-advisory.example.com,Senior Manager,Salt Lake City,Risk & Compliance,460,135
+ST036,Jason Hahn,jason.hahn@brightwater-advisory.example.com,Senior Manager,Charlotte,Technology Advisory,420,135
+ST037,Nancy Edwards,nancy.edwards@brightwater-advisory.example.com,Senior Manager,Salt Lake City,Finance Transformation,435,135
+ST038,Diana Foster,diana.foster@brightwater-advisory.example.com,Senior Manager,Minneapolis,Transactions,445,135
+ST039,Robin Ellis,robin.ellis@brightwater-advisory.example.com,Senior Manager,Columbus,Finance Transformation,460,135
+ST040,Joseph Wright,joseph.wright@brightwater-advisory.example.com,Senior Manager,Charlotte,Risk & Compliance,450,135
+ST041,Anna Baker,anna.baker@brightwater-advisory.example.com,Senior Manager,Phoenix,Technology Advisory,405,135
+ST042,Brenda Hurst,brenda.hurst@brightwater-advisory.example.com,Senior Manager,Minneapolis,Finance Transformation,440,135
+ST043,Reginald Robinson,reginald.robinson@brightwater-advisory.example.com,Senior Manager,Minneapolis,Technology Advisory,405,135
+ST044,Whitney Hicks,whitney.hicks@brightwater-advisory.example.com,Senior Manager,Minneapolis,Risk & Compliance,470,135
+ST045,Christopher Williams,christopher.williams@brightwater-advisory.example.com,Senior Manager,Charlotte,Technology Advisory,445,135
+ST046,Daniel Burton,daniel.burton@brightwater-advisory.example.com,Senior Manager,Salt Lake City,Operations Excellence,435,135
+ST047,Laura Henderson,laura.henderson@brightwater-advisory.example.com,Senior Manager,Minneapolis,Risk & Compliance,435,135
+ST048,Bryan James,bryan.james@brightwater-advisory.example.com,Senior Manager,Salt Lake City,Finance Transformation,445,135
+ST049,Wendy Rice,wendy.rice@brightwater-advisory.example.com,Senior Manager,Minneapolis,Transactions,425,135
+ST050,Tasha Valencia,tasha.valencia@brightwater-advisory.example.com,Senior Manager,Charlotte,Risk & Compliance,400,135
+ST051,Alexander Le,alexander.le@brightwater-advisory.example.com,Manager,Salt Lake City,Operations Excellence,325,140
+ST052,Erin Herrera,erin.herrera@brightwater-advisory.example.com,Manager,Minneapolis,Technology Advisory,360,140
+ST053,Joseph Davidson,joseph.davidson@brightwater-advisory.example.com,Manager,Phoenix,Technology Advisory,360,140
+ST054,Daniel Graham,daniel.graham@brightwater-advisory.example.com,Manager,Minneapolis,Technology Advisory,375,140
+ST055,Shawn Mckay,shawn.mckay@brightwater-advisory.example.com,Manager,Minneapolis,Finance Transformation,350,140
+ST056,Nancy Baker,nancy.baker@brightwater-advisory.example.com,Manager,Columbus,Operations Excellence,365,140
+ST057,Vincent White,vincent.white@brightwater-advisory.example.com,Manager,Salt Lake City,Technology Advisory,335,140
+ST058,Rita Harrell,rita.harrell@brightwater-advisory.example.com,Manager,Minneapolis,Transactions,375,140
+ST059,Kenneth Fowler,kenneth.fowler@brightwater-advisory.example.com,Manager,Minneapolis,Risk & Compliance,345,140
+ST060,Chelsea Hernandez,chelsea.hernandez@brightwater-advisory.example.com,Manager,Salt Lake City,Finance Transformation,365,140
+ST061,Kathryn Ryan,kathryn.ryan@brightwater-advisory.example.com,Manager,Salt Lake City,Finance Transformation,350,140
+ST062,Kimberly Moreno,kimberly.moreno@brightwater-advisory.example.com,Manager,Columbus,Risk & Compliance,360,140
+ST063,Aaron Nguyen,aaron.nguyen@brightwater-advisory.example.com,Manager,Minneapolis,Technology Advisory,365,140
+ST064,Andrew Hickman,andrew.hickman@brightwater-advisory.example.com,Manager,Salt Lake City,Transactions,330,140
+ST065,Natasha Decker,natasha.decker@brightwater-advisory.example.com,Manager,Columbus,Transactions,325,140
+ST066,Kyle Brown,kyle.brown@brightwater-advisory.example.com,Manager,Phoenix,Technology Advisory,370,140
+ST067,Natalie Arroyo,natalie.arroyo@brightwater-advisory.example.com,Manager,Minneapolis,Transactions,365,140
+ST068,Christopher Tucker,christopher.tucker@brightwater-advisory.example.com,Manager,Charlotte,Operations Excellence,325,140
+ST069,Chad Hodges,chad.hodges@brightwater-advisory.example.com,Manager,Minneapolis,Risk & Compliance,325,140
+ST070,Katie Anderson,katie.anderson@brightwater-advisory.example.com,Manager,Minneapolis,Risk & Compliance,350,140
+ST071,Thomas Pierce,thomas.pierce@brightwater-advisory.example.com,Manager,Phoenix,Operations Excellence,330,140
+ST072,Joseph Brennan,joseph.brennan@brightwater-advisory.example.com,Manager,Phoenix,Finance Transformation,365,140
+ST073,Rodney Lewis,rodney.lewis@brightwater-advisory.example.com,Manager,Minneapolis,Operations Excellence,375,140
+ST074,Amber Blair,amber.blair@brightwater-advisory.example.com,Manager,Minneapolis,Finance Transformation,345,140
+ST075,James Collins,james.collins@brightwater-advisory.example.com,Manager,Salt Lake City,Operations Excellence,335,140
+ST076,Wanda Santos,wanda.santos@brightwater-advisory.example.com,Manager,Minneapolis,Operations Excellence,350,140
+ST077,Samuel Holmes,samuel.holmes@brightwater-advisory.example.com,Manager,Minneapolis,Technology Advisory,325,140
+ST078,David Walker,david.walker@brightwater-advisory.example.com,Manager,Salt Lake City,Finance Transformation,355,140
+ST079,Matthew Chapman,matthew.chapman@brightwater-advisory.example.com,Manager,Columbus,Operations Excellence,345,140
+ST080,Jerry Robinson,jerry.robinson@brightwater-advisory.example.com,Manager,Minneapolis,Technology Advisory,325,140
+ST081,Chad Welch,chad.welch@brightwater-advisory.example.com,Senior Consultant,Columbus,Operations Excellence,260,145
+ST082,Jeremy Whitehead,jeremy.whitehead@brightwater-advisory.example.com,Senior Consultant,Phoenix,Transactions,290,145
+ST083,Michele Jones,michele.jones@brightwater-advisory.example.com,Senior Consultant,Charlotte,Finance Transformation,265,145
+ST084,John Caldwell,john.caldwell@brightwater-advisory.example.com,Senior Consultant,Phoenix,Transactions,290,145
+ST085,Jason Anderson,jason.anderson@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Risk & Compliance,260,145
+ST086,Selena Duncan,selena.duncan@brightwater-advisory.example.com,Senior Consultant,Columbus,Transactions,255,145
+ST087,Thomas Mueller,thomas.mueller@brightwater-advisory.example.com,Senior Consultant,Phoenix,Risk & Compliance,255,145
+ST088,Lindsey Lee,lindsey.lee@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Transactions,255,145
+ST089,Collin Jordan,collin.jordan@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Finance Transformation,260,145
+ST090,Rodney Owens,rodney.owens@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Operations Excellence,250,145
+ST091,Jessica Nunez,jessica.nunez@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Transactions,250,145
+ST092,Tracey Garcia,tracey.garcia@brightwater-advisory.example.com,Senior Consultant,Phoenix,Transactions,270,145
+ST093,Richard Morgan,richard.morgan@brightwater-advisory.example.com,Senior Consultant,Charlotte,Technology Advisory,290,145
+ST094,Michelle Wright,michelle.wright@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Operations Excellence,255,145
+ST095,James West,james.west@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Technology Advisory,275,145
+ST096,Robert Ramirez,robert.ramirez@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Finance Transformation,265,145
+ST097,John Leblanc,john.leblanc@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Finance Transformation,290,145
+ST098,Scott Callahan,scott.callahan@brightwater-advisory.example.com,Senior Consultant,Salt Lake City,Technology Advisory,255,145
+ST099,Andrea Williams,andrea.williams@brightwater-advisory.example.com,Senior Consultant,Salt Lake City,Risk & Compliance,295,145
+ST100,Yvette Huff,yvette.huff@brightwater-advisory.example.com,Senior Consultant,Columbus,Technology Advisory,280,145
+ST101,Tanya House,tanya.house@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Transactions,275,145
+ST102,Melinda Martin,melinda.martin@brightwater-advisory.example.com,Senior Consultant,Columbus,Transactions,270,145
+ST103,Todd Lewis,todd.lewis@brightwater-advisory.example.com,Senior Consultant,Phoenix,Risk & Compliance,260,145
+ST104,Richard Brown,richard.brown@brightwater-advisory.example.com,Senior Consultant,Charlotte,Finance Transformation,270,145
+ST105,Nicholas Galloway,nicholas.galloway@brightwater-advisory.example.com,Senior Consultant,Charlotte,Operations Excellence,265,145
+ST106,Joseph Bowers,joseph.bowers@brightwater-advisory.example.com,Senior Consultant,Charlotte,Finance Transformation,280,145
+ST107,Spencer Henderson,spencer.henderson@brightwater-advisory.example.com,Senior Consultant,Salt Lake City,Technology Advisory,295,145
+ST108,Susan Cowan,susan.cowan@brightwater-advisory.example.com,Senior Consultant,Charlotte,Operations Excellence,275,145
+ST109,Angela Higgins,angela.higgins@brightwater-advisory.example.com,Senior Consultant,Phoenix,Risk & Compliance,290,145
+ST110,Eric Phillips,eric.phillips@brightwater-advisory.example.com,Senior Consultant,Phoenix,Finance Transformation,260,145
+ST111,Tanya Riley,tanya.riley@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Operations Excellence,285,145
+ST112,Amy Adkins,amy.adkins@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Transactions,280,145
+ST113,Brian Silva,brian.silva@brightwater-advisory.example.com,Senior Consultant,Phoenix,Operations Excellence,250,145
+ST114,Wesley Farrell,wesley.farrell@brightwater-advisory.example.com,Senior Consultant,Minneapolis,Transactions,295,145
+ST115,Eric Yu,eric.yu@brightwater-advisory.example.com,Senior Consultant,Phoenix,Operations Excellence,285,145
+ST116,Christopher Lopez,christopher.lopez@brightwater-advisory.example.com,Consultant,Salt Lake City,Finance Transformation,190,145
+ST117,Brooke Leonard,brooke.leonard@brightwater-advisory.example.com,Consultant,Minneapolis,Operations Excellence,210,145
+ST118,Joe Wilson,joe.wilson@brightwater-advisory.example.com,Consultant,Charlotte,Finance Transformation,205,145
+ST119,Pamela Sanchez,pamela.sanchez@brightwater-advisory.example.com,Consultant,Charlotte,Technology Advisory,215,145
+ST120,Brooke Harvey,brooke.harvey@brightwater-advisory.example.com,Consultant,Charlotte,Risk & Compliance,210,145
+ST121,Robert Silva,robert.silva@brightwater-advisory.example.com,Consultant,Minneapolis,Technology Advisory,185,145
+ST122,Alexandra Donovan,alexandra.donovan@brightwater-advisory.example.com,Consultant,Phoenix,Technology Advisory,200,145
+ST123,James Moran,james.moran@brightwater-advisory.example.com,Consultant,Phoenix,Technology Advisory,195,145
+ST124,John Foster,john.foster@brightwater-advisory.example.com,Consultant,Columbus,Technology Advisory,190,145
+ST125,Emily Evans,emily.evans@brightwater-advisory.example.com,Consultant,Minneapolis,Risk & Compliance,185,145
+ST126,Leslie Walton,leslie.walton@brightwater-advisory.example.com,Consultant,Salt Lake City,Operations Excellence,200,145
+ST127,Charles Ellis,charles.ellis@brightwater-advisory.example.com,Consultant,Phoenix,Finance Transformation,205,145
+ST128,Yolanda Ferrell,yolanda.ferrell@brightwater-advisory.example.com,Consultant,Columbus,Technology Advisory,200,145
+ST129,Charles Lewis,charles.lewis@brightwater-advisory.example.com,Consultant,Salt Lake City,Finance Transformation,215,145
+ST130,Joseph Mahoney,joseph.mahoney@brightwater-advisory.example.com,Consultant,Minneapolis,Risk & Compliance,220,145
+ST131,Nicole Suarez,nicole.suarez@brightwater-advisory.example.com,Consultant,Minneapolis,Operations Excellence,210,145
+ST132,Mike Moore,mike.moore@brightwater-advisory.example.com,Consultant,Minneapolis,Finance Transformation,200,145
+ST133,Martha Warner,martha.warner@brightwater-advisory.example.com,Consultant,Minneapolis,Transactions,200,145
+ST134,Cheryl Archer,cheryl.archer@brightwater-advisory.example.com,Consultant,Minneapolis,Operations Excellence,225,145
+ST135,Destiny Smith,destiny.smith@brightwater-advisory.example.com,Consultant,Minneapolis,Risk & Compliance,230,145
+ST136,Lisa Evans,lisa.evans@brightwater-advisory.example.com,Consultant,Minneapolis,Technology Advisory,220,145
+ST137,Elizabeth Mcmillan,elizabeth.mcmillan@brightwater-advisory.example.com,Consultant,Salt Lake City,Finance Transformation,210,145
+ST138,Dennis Wilson,dennis.wilson@brightwater-advisory.example.com,Consultant,Minneapolis,Technology Advisory,225,145
+ST139,Daniel Tran,daniel.tran@brightwater-advisory.example.com,Consultant,Minneapolis,Operations Excellence,185,145
+ST140,Joseph Jacobs,joseph.jacobs@brightwater-advisory.example.com,Consultant,Minneapolis,Finance Transformation,225,145
+ST141,Jennifer Harris,jennifer.harris@brightwater-advisory.example.com,Consultant,Minneapolis,Finance Transformation,180,145
+ST142,Cynthia Baker,cynthia.baker@brightwater-advisory.example.com,Consultant,Phoenix,Transactions,220,145
+ST143,Tracy Whitehead,tracy.whitehead@brightwater-advisory.example.com,Consultant,Columbus,Risk & Compliance,180,145
+ST144,Meghan Davis,meghan.davis@brightwater-advisory.example.com,Consultant,Salt Lake City,Finance Transformation,215,145
+ST145,Rodney Hill,rodney.hill@brightwater-advisory.example.com,Consultant,Columbus,Operations Excellence,180,145
+ST146,Adam Wise,adam.wise@brightwater-advisory.example.com,Consultant,Minneapolis,Technology Advisory,205,145
+ST147,Dana Green,dana.green@brightwater-advisory.example.com,Consultant,Phoenix,Finance Transformation,220,145
+ST148,Joyce Arnold,joyce.arnold@brightwater-advisory.example.com,Consultant,Phoenix,Finance Transformation,185,145
+ST149,Ronald Smith,ronald.smith@brightwater-advisory.example.com,Consultant,Phoenix,Operations Excellence,225,145
+ST150,Charles Ware,charles.ware@brightwater-advisory.example.com,Consultant,Minneapolis,Finance Transformation,210,145

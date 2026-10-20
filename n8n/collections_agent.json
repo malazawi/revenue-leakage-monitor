@@ -1,0 +1,899 @@
+{
+  "name": "Brightwater Collections Agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "fd0b2ddc-a268-4043-974c-a0b3b1472978",
+      "name": "Run now",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 7 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "f8aa0253-70d1-40c6-9822-7dce6b1aa60a",
+      "name": "Every weekday 7:30 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4490ad50-35fd-429c-ab97-38bb5f2d219d",
+              "name": "spreadsheet_url",
+              "value": "PASTE_YOUR_GOOGLE_SHEET_URL_HERE",
+              "type": "string"
+            },
+            {
+              "id": "68da8141-8854-4cfd-9f3a-c58334233522",
+              "name": "summary_email",
+              "value": "PASTE_YOUR_EMAIL_HERE",
+              "type": "string"
+            },
+            {
+              "id": "40a0d433-0be5-4e3d-984f-c9cf5ad2c9be",
+              "name": "openai_model",
+              "value": "gpt-4o-mini",
+              "type": "string"
+            },
+            {
+              "id": "6a79b754-2986-40b7-a296-a6372455d5cd",
+              "name": "daily_limit",
+              "value": 10,
+              "type": "number"
+            },
+            {
+              "id": "59db8fa2-ab3e-48d1-b2f0-566e6fc0c8b0",
+              "name": "min_balance",
+              "value": 5000,
+              "type": "number"
+            },
+            {
+              "id": "baf08d1d-b93b-4921-9f45-09578f234b8f",
+              "name": "min_days_past_due",
+              "value": 31,
+              "type": "number"
+            },
+            {
+              "id": "77cba98d-3135-4ad0-8672-cd9260e40046",
+              "name": "contact_gap_days",
+              "value": 14,
+              "type": "number"
+            },
+            {
+              "id": "e94ac767-2ef4-4526-8f3d-cea7dbb59d1c",
+              "name": "escalation_days",
+              "value": 120,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "f6f892a7-1762-40ab-9dc1-dd3b36fe714c",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.spreadsheet_url }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Outreach Log",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "59603e83-dd36-410a-9800-d14d59e5d458",
+      "name": "Read Outreach Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        400
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.spreadsheet_url }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "AR Aging",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "f9e37fe5-6583-4c9f-ae42-58ecee2b11ee",
+      "name": "Read AR Aging",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        400
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "219f692c-404d-4022-aff9-e1776900529d",
+              "leftValue": "={{ $json.days_past_due }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              },
+              "rightValue": "={{ $('Config').first().json.min_days_past_due }}"
+            },
+            {
+              "id": "a50b6f31-7222-4a0c-8efe-91ffee329714",
+              "leftValue": "={{ $json.balance }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              },
+              "rightValue": "={{ $('Config').first().json.min_balance }}"
+            },
+            {
+              "id": "0f3f8712-cc82-4dd1-8804-e17680b0c159",
+              "leftValue": "={{ $json.exception_type }}",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "764b2b50-0b77-47de-b69f-4833a07318d3",
+      "name": "Eligible invoices",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Score eligible invoices and group them into ONE action per client.\n// Rules live in docs/business_rules.md. Thresholds come from the Config node.\nconst cfg = $('Config').first().json;\nconst today = $now.toFormat('yyyy-MM-dd');\nconst gap = Number(cfg.contact_gap_days);\n\n// 1) Clients this agent already contacted within the contact gap (from the Outreach Log)\nconst recentlyContacted = new Set();\nfor (const row of $('Read Outreach Log').all()) {\n  if (!row.json.run_date || !row.json.client_id) continue;\n  const ageDays = (new Date(today) - new Date(row.json.run_date)) / 86400000;\n  if (ageDays < gap) recentlyContacted.add(row.json.client_id);\n}\n\n// 2) Priority score per invoice (0-100): balance 40%, days past due 35%,\n//    days since last contact 15% (never contacted counts as 60), broken promises 10%\nconst scaled = (value, cap) => Math.max(0, Math.min(Number(value) / cap, 1));\nconst money = (n) => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });\n\nconst clients = {};\nfor (const { json: inv } of $input.all()) {\n  const since = inv.days_since_contact === '' || inv.days_since_contact == null ? null : Number(inv.days_since_contact);\n  if (since !== null && since < gap) continue;          // the team contacted them recently\n  if (recentlyContacted.has(inv.client_id)) continue;   // this agent contacted them recently\n\n  const score = 100 * (0.40 * scaled(inv.balance, 100000) + 0.35 * scaled(inv.days_past_due, 180)\n                     + 0.15 * scaled(since ?? 60, 60) + 0.10 * scaled(inv.broken_promises, 3));\n\n  const c = clients[inv.client_id] ??= {\n    client_id: inv.client_id, client_name: inv.client_name, industry: inv.industry,\n    ap_contact_name: inv.ap_contact_name, ap_contact_email: inv.ap_contact_email,\n    billing_partner: inv.billing_partner, billing_partner_email: inv.billing_partner_email,\n    invoices: [], total_balance: 0, oldest_days_past_due: 0, priority_score: 0, broken_promises: 0,\n  };\n  c.invoices.push(`${inv.invoice_id} | issued ${inv.invoice_date} | ${money(inv.balance)} | ${inv.days_past_due} days past due`);\n  c.total_balance += Number(inv.balance);\n  c.oldest_days_past_due = Math.max(c.oldest_days_past_due, Number(inv.days_past_due));\n  c.priority_score = Math.max(c.priority_score, score);\n  c.broken_promises += Number(inv.broken_promises || 0);\n}\n\n// 3) Lane + tone, decided by the client's OLDEST eligible invoice\nreturn Object.values(clients)\n  .map((c) => {\n    const d = c.oldest_days_past_due;\n    const lane = d > Number(cfg.escalation_days) ? 'escalation' : 'client';\n    const tone = lane === 'escalation' ? 'internal escalation' : d > 90 ? 'urgent' : d > 60 ? 'firm' : 'friendly';\n    return { json: { ...c, lane, tone, invoice_count: c.invoices.length, invoice_lines: c.invoices.join('\\n'),\n                     total_balance: Math.round(c.total_balance * 100) / 100,\n                     total_balance_fmt: money(c.total_balance), priority_score: Math.round(c.priority_score * 10) / 10 } };\n  })\n  .sort((a, b) => b.json.priority_score - a.json.priority_score);\n"
+      },
+      "id": "a44c71f0-d76c-4afc-bfdf-44b37b54eea2",
+      "name": "Score & group by client",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "24b85450-0ff5-4051-91a1-9d4998469964",
+              "leftValue": "={{ $json.lane }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "escalation"
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "ce29c86c-3671-4182-b9b7-da4c6af957b9",
+      "name": "120+ days?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": "={{ $('Config').first().json.daily_limit }}"
+      },
+      "id": "080488f6-f2c7-4842-92ba-d5753ed0002f",
+      "name": "Top clients (daily cap)",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "254e73c2-0222-40e2-8b34-490f7b5fe000",
+              "name": "system_prompt",
+              "value": "You draft accounts-receivable follow-up emails for Brightwater Advisory Partners, a consulting firm. Write as the billing partner named in the data, to the client's accounts payable contact.\nRules:\n- Use ONLY the facts provided (client, invoice numbers, amounts, dates). Never invent amounts, dates, fees or consequences.\n- Match the requested tone. friendly = polite reminder. firm = clear, and asks the client to confirm a payment date. urgent = direct, asks for payment or a call within 5 business days. No threats, no legal language.\n- List every invoice provided. Offer to help if there is a question about an invoice.\n- Under 150 words. Plain text. Sign with the billing partner's name.\nReturn JSON only: {\"subject\": string, \"body\": string}",
+              "type": "string"
+            },
+            {
+              "id": "a8235e97-6ecd-40ba-8688-14567577d5d0",
+              "name": "user_prompt",
+              "value": "=Tone: {{ $json.tone }}\nClient: {{ $json.client_name }}\nAP contact: {{ $json.ap_contact_name }}\nBilling partner: {{ $json.billing_partner }}\nTotal past due: {{ $json.total_balance_fmt }}\nInvoices:\n{{ $json.invoice_lines }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ce72ef5b-e963-4ad7-8f8e-463b451866e0",
+      "name": "Build prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Config').first().json.openai_model, temperature: 0.4, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $json.system_prompt }, { role: 'user', content: $json.user_prompt } ] }) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1500
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "f2195a97-4d1c-4a69-a9ea-058d426c2126",
+      "name": "Draft email (OpenAI)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        560
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6e15b7a6-9602-44be-b280-d40d36b2b1b8",
+              "name": "subject",
+              "value": "={{ JSON.parse($json.choices[0].message.content).subject }}",
+              "type": "string"
+            },
+            {
+              "id": "ac39ee84-f6db-4481-99a2-935a747b219b",
+              "name": "body",
+              "value": "={{ JSON.parse($json.choices[0].message.content).body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "f048cecc-cd29-46ad-856b-2c0876cacc32",
+      "name": "Read AI draft",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "sendTo": "={{ $('Build prompt').item.json.ap_contact_email }}"
+        }
+      },
+      "id": "cef1f8ae-b8d9-4688-bdf5-5ff6780acbfc",
+      "name": "Gmail draft to client",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2640,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "684a977a-532b-4f2d-85d6-f04538614b2c",
+              "name": "run_date",
+              "value": "={{ $now.toFormat('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "c17a54d3-637b-46f5-9a7a-5cb46a8e9dbd",
+              "name": "lane",
+              "value": "Client reminder",
+              "type": "string"
+            },
+            {
+              "id": "b39fe186-f873-4910-ab8e-7c1a5cb2a7bc",
+              "name": "client_id",
+              "value": "={{ $('Build prompt').item.json.client_id }}",
+              "type": "string"
+            },
+            {
+              "id": "610592b8-718f-461f-88f6-d043c68cf92a",
+              "name": "client_name",
+              "value": "={{ $('Build prompt').item.json.client_name }}",
+              "type": "string"
+            },
+            {
+              "id": "f15ffcfc-c7bf-4808-8465-2c9aa0c455db",
+              "name": "recipient",
+              "value": "={{ $('Build prompt').item.json.ap_contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "9773cc9b-c1b0-420e-a229-df6fc5494664",
+              "name": "invoices",
+              "value": "={{ $('Build prompt').item.json.invoice_count }}",
+              "type": "string"
+            },
+            {
+              "id": "ee8f3ee0-c1ca-4929-adf5-0db6e25ebca1",
+              "name": "total_balance",
+              "value": "={{ $('Build prompt').item.json.total_balance }}",
+              "type": "string"
+            },
+            {
+              "id": "05712ca0-cef3-4794-a69a-aa54f65a8172",
+              "name": "oldest_days_past_due",
+              "value": "={{ $('Build prompt').item.json.oldest_days_past_due }}",
+              "type": "string"
+            },
+            {
+              "id": "3cc5c844-7716-47b3-9275-4fc47df71496",
+              "name": "tone",
+              "value": "={{ $('Build prompt').item.json.tone }}",
+              "type": "string"
+            },
+            {
+              "id": "4672656d-ebe1-4b2e-a8d1-99b0f29a96b6",
+              "name": "priority_score",
+              "value": "={{ $('Build prompt').item.json.priority_score }}",
+              "type": "string"
+            },
+            {
+              "id": "779c6ca0-1388-4fd8-8fba-b9ce0491ad42",
+              "name": "draft_status",
+              "value": "Draft created - awaiting review",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "ab82f6a5-2fcc-4a12-80c7-3629653a1a7d",
+      "name": "Log client draft",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2880,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 120+ days past due: no client email. Instead, one internal note per billing partner\n// listing all of their escalated clients, so partners get a single digest.\nconst byPartner = {};\nfor (const { json: c } of $input.all()) {\n  const p = byPartner[c.billing_partner_email] ??= { billing_partner: c.billing_partner,\n    billing_partner_email: c.billing_partner_email, clients: [], total: 0 };\n  p.clients.push(c);\n  p.total += Number(c.total_balance);\n}\nconst money = (n) => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });\nreturn Object.values(byPartner).map((p) => {\n  const first = p.billing_partner.split(' ')[0];\n  const lines = p.clients.map((c) => `- ${c.client_name}: ${c.total_balance_fmt} across ${c.invoice_count} invoice(s), `\n    + `oldest ${c.oldest_days_past_due} days past due${c.broken_promises ? `, ${c.broken_promises} broken promise(s) to pay` : ''}`);\n  const body = [`Hi ${first},`, '',\n    `The following ${p.clients.length === 1 ? 'client has' : `${p.clients.length} clients have`} balances more than 120 days past due `\n    + `(${money(p.total)} in total). Collections has paused routine reminders and recommends a partner-level conversation:`, '',\n    ...lines, '',\n    'Could you reach out or let us know the status (dispute, payment plan, or write-off review)? The invoice detail is in the AR aging report.', '',\n    'Thanks,', 'Billing & Collections'].join('\\n');\n  return { json: { ...p, client_ids: p.clients.map((c) => c.client_id), subject:\n    `Action needed: ${p.clients.length} client${p.clients.length === 1 ? '' : 's'} over 120 days past due (${money(p.total)})`, body } };\n});\n"
+      },
+      "id": "fd6e130d-c593-42b5-95e3-d1e261f8e1e0",
+      "name": "Group by billing partner",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "sendTo": "={{ $json.billing_partner_email }}"
+        }
+      },
+      "id": "8e2f9a7e-3069-43bb-997b-9686c1ed3b38",
+      "name": "Gmail draft to partner",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1920,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One log row per escalated client, so the 14-day contact rule also applies to them.\n// (Runs after the partner drafts are created; one partner note covers several clients.)\nconst rows = [];\nfor (const { json: partner } of $('Group by billing partner').all()) {\n  for (const c of partner.clients) {\n    rows.push({ json: {\n      run_date: $now.toFormat('yyyy-MM-dd'), lane: 'Partner escalation', client_id: c.client_id, client_name: c.client_name,\n      recipient: partner.billing_partner_email, invoices: c.invoice_count, total_balance: c.total_balance,\n      oldest_days_past_due: c.oldest_days_past_due, tone: 'internal escalation', priority_score: c.priority_score,\n      draft_status: 'Draft created - awaiting review' } });\n  }\n}\nreturn rows;\n"
+      },
+      "id": "02a1f883-43a6-4bd4-9b69-61991cb2b8a2",
+      "name": "Log escalations",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ae511bbc-fcbf-4700-97eb-57846745f0e5",
+      "name": "Combine lanes",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3120,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.spreadsheet_url }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Outreach Log",
+          "mode": "name"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        }
+      },
+      "id": "205e2e2c-31d6-4227-a4ec-9322baafa3f6",
+      "name": "Append to Outreach Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3360,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One plain-text summary of today's run: what was drafted, escalated and skipped (and why).\nconst cfg = $('Config').first().json;\nconst logged = $input.all().map((i) => i.json);\nconst all = $('Read AR Aging').all().map((i) => i.json);\nconst money = (n) => '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });\nconst count = (f) => all.filter(f).length;\n\nconst clientRows = logged.filter((r) => r.lane === 'Client reminder');\nconst escRows = logged.filter((r) => r.lane === 'Partner escalation');\nconst skipped = {\n  'Disputed': count((r) => r.exception_type === 'Disputed'),\n  'On a payment plan': count((r) => r.exception_type === 'Payment plan'),\n  [`Under ${cfg.min_days_past_due} days past due`]: count((r) => Number(r.days_past_due) < Number(cfg.min_days_past_due)),\n  [`Balance under ${money(cfg.min_balance)}`]: count((r) => Number(r.balance) < Number(cfg.min_balance)),\n};\nconst lines = [\n  `Collections Agent - daily run ${$now.toFormat('yyyy-MM-dd')}`, '',\n  `Open invoices scanned: ${all.length} (${money(all.reduce((s, r) => s + Number(r.balance), 0))} open AR)`, '',\n  `CLIENT REMINDERS - ${clientRows.length} Gmail drafts awaiting your review`,\n  ...clientRows.map((r) => `  - ${r.client_name}: ${money(r.total_balance)}, ${r.oldest_days_past_due} days past due (${r.tone})`), '',\n  `PARTNER ESCALATIONS (120+ days) - ${escRows.length} clients, ${money(escRows.reduce((s, r) => s + Number(r.total_balance), 0))}`,\n  ...Object.entries(escRows.reduce((acc, r) => {\n      const p = (acc[r.recipient] ??= { n: 0, total: 0 }); p.n += 1; p.total += Number(r.total_balance); return acc; }, {}))\n    .sort((a, b) => b[1].total - a[1].total)\n    .map(([email, p]) => `  - ${email.split('@')[0].replace('.', ' ').replace(/\\b\\w/g, (ch) => ch.toUpperCase())}: `\n      + `${p.n} client${p.n === 1 ? '' : 's'}, ${money(p.total)} (one draft note)`), '',\n  'SKIPPED (invoice count, a row can match more than one reason)',\n  ...Object.entries(skipped).map(([k, v]) => `  - ${k}: ${v}`),\n  '  - Also skipped: anything contacted in the last ' + cfg.contact_gap_days + ' days, and clients beyond the daily cap of ' + cfg.daily_limit, '',\n  'Nothing was sent to clients. All emails are drafts in Gmail.',\n];\nreturn [{ json: { subject: `Collections Agent: ${clientRows.length} drafts, ${escRows.length} escalations`, body: lines.join('\\n') } }];\n"
+      },
+      "id": "49187f59-85fc-4a27-8f71-bf11a7c41834",
+      "name": "Build daily summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Config').first().json.summary_email }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "559b1a9d-2c09-4a5b-82ea-112068fbce8d",
+      "name": "Email me the summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3840,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Brightwater Collections Agent\nRuns every weekday (or on demand). Reads the AR aging sheet, applies the business rules, and prepares follow-ups **as Gmail drafts only**. A person reviews and sends.\n\n**Setup:** open **Config** and paste your Google Sheet URL and email. Connect Google Sheets, Gmail and OpenAI credentials on the nodes that need them.",
+        "height": 220,
+        "width": 520,
+        "color": 4
+      },
+      "id": "2aad96bc-958b-45ea-92cf-3644beb26144",
+      "name": "Note 21",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Business rules\n31+ days past due, $5K+ balance, not disputed or on a payment plan, no contact in 14 days. Score = balance 40% / days past due 35% / days since contact 15% / broken promises 10%. One action per client.",
+        "height": 180,
+        "width": 520,
+        "color": 7
+      },
+      "id": "4c93ed2f-e0da-47f3-9259-5aeaafc600db",
+      "name": "Note 22",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        900,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Client lane (31-120 days)\nTop 10 clients by score. AI writes one email per client in the right tone (friendly / firm / urgent) using only the facts provided. Saved as a Gmail draft.",
+        "height": 160,
+        "width": 560,
+        "color": 5
+      },
+      "id": "575f82b0-8f2e-4caf-8335-da2f7f05b8b6",
+      "name": "Note 23",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Escalation lane (120+ days)\nNo client email. One internal note per billing partner listing all their escalated clients.",
+        "height": 140,
+        "width": 560,
+        "color": 3
+      },
+      "id": "6a2cdb5a-5501-4442-93e6-82f994cd5ef3",
+      "name": "Note 24",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Audit trail\nEvery action is logged to the Outreach Log sheet (also powers the 14-day rule), then a summary of drafted, escalated and skipped items is emailed to you.",
+        "height": 150,
+        "width": 560,
+        "color": 6
+      },
+      "id": "d91877d8-4e23-4894-9452-80c6e9de0541",
+      "name": "Note 25",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3080,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Run now": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every weekday 7:30 AM": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Read Outreach Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Outreach Log": {
+      "main": [
+        [
+          {
+            "node": "Read AR Aging",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read AR Aging": {
+      "main": [
+        [
+          {
+            "node": "Eligible invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eligible invoices": {
+      "main": [
+        [
+          {
+            "node": "Score & group by client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score & group by client": {
+      "main": [
+        [
+          {
+            "node": "120+ days?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "120+ days?": {
+      "main": [
+        [
+          {
+            "node": "Group by billing partner",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Top clients (daily cap)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top clients (daily cap)": {
+      "main": [
+        [
+          {
+            "node": "Build prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build prompt": {
+      "main": [
+        [
+          {
+            "node": "Draft email (OpenAI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft email (OpenAI)": {
+      "main": [
+        [
+          {
+            "node": "Read AI draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read AI draft": {
+      "main": [
+        [
+          {
+            "node": "Gmail draft to client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail draft to client": {
+      "main": [
+        [
+          {
+            "node": "Log client draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group by billing partner": {
+      "main": [
+        [
+          {
+            "node": "Gmail draft to partner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail draft to partner": {
+      "main": [
+        [
+          {
+            "node": "Log escalations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log escalations": {
+      "main": [
+        [
+          {
+            "node": "Combine lanes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log client draft": {
+      "main": [
+        [
+          {
+            "node": "Combine lanes",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine lanes": {
+      "main": [
+        [
+          {
+            "node": "Append to Outreach Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Outreach Log": {
+      "main": [
+        [
+          {
+            "node": "Build daily summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build daily summary": {
+      "main": [
+        [
+          {
+            "node": "Email me the summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

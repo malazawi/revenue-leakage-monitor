@@ -1,0 +1,103 @@
+table engagements
+	lineageTag: af2cb371-8a83-4b96-93a1-b05a9ca29556
+
+	column engagement_id
+		dataType: string
+		lineageTag: 1f1a7385-b41a-4912-8f14-8f4616b681f6
+		summarizeBy: none
+		sourceColumn: engagement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: string
+		lineageTag: 528c8a01-7f17-47c7-8f74-b266ab44facf
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column engagement_name
+		dataType: string
+		lineageTag: 235df480-2dba-4370-9652-11653537f0ab
+		summarizeBy: none
+		sourceColumn: engagement_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column practice
+		dataType: string
+		lineageTag: 4d64d30d-dbce-4c81-b997-bed24c083c46
+		summarizeBy: none
+		sourceColumn: practice
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_partner_id
+		dataType: string
+		lineageTag: bebef658-7065-46fe-bbee-2a9cd63baf0b
+		summarizeBy: none
+		sourceColumn: billing_partner_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fee_type
+		dataType: string
+		lineageTag: 2ce5078f-b951-40dc-a003-fc7f07cf579e
+		summarizeBy: none
+		sourceColumn: fee_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column agreed_discount_pct
+		dataType: double
+		formatString: 0%
+		lineageTag: 184d9dfb-90e0-4a02-a5e4-f01797cce6e3
+		summarizeBy: none
+		sourceColumn: agreed_discount_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column start_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: acb6fe41-d28a-42e7-aff3-3ae5876ea024
+		summarizeBy: none
+		sourceColumn: start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column end_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: c266a461-5a0d-45df-a578-1e811fbcdc6d
+		summarizeBy: none
+		sourceColumn: end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Billing Partner' = LOOKUPVALUE ( staff[staff_name], staff[staff_id], engagements[billing_partner_id] )
+		dataType: string
+		lineageTag: 3d0735b2-f81d-4e39-b46b-33d982875adb
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition engagements = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "engagements.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"engagement_id", type text}, {"client_id", type text}, {"engagement_name", type text}, {"practice", type text}, {"billing_partner_id", type text}, {"fee_type", type text}, {"agreed_discount_pct", type number}, {"start_date", type date}, {"end_date", type date}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

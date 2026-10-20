@@ -1,0 +1,44 @@
+table ar_exceptions
+	lineageTag: 5b0ac406-d4c2-4d9d-9c20-b7e6a527fa20
+
+	column invoice_id
+		dataType: string
+		lineageTag: c29fa7f1-b99b-43d2-82da-a2357d3638a5
+		summarizeBy: none
+		sourceColumn: invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column exception_type
+		dataType: string
+		lineageTag: 8a82c205-4851-42b8-bb03-b2985831a918
+		summarizeBy: none
+		sourceColumn: exception_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column flag_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 7f359f16-f7fd-4828-b5d8-77acbd0aa36d
+		summarizeBy: none
+		sourceColumn: flag_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition ar_exceptions = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "ar_exceptions.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"invoice_id", type text}, {"exception_type", type text}, {"flag_date", type date}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

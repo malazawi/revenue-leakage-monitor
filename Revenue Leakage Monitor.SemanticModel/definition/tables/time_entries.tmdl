@@ -1,0 +1,151 @@
+table time_entries
+	lineageTag: f0fb5116-d640-4661-bd07-2164ff8b9c73
+
+	column entry_id
+		dataType: string
+		lineageTag: c43a715e-c32e-46a1-bc2a-46025acf43e6
+		summarizeBy: none
+		sourceColumn: entry_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column engagement_id
+		dataType: string
+		lineageTag: c7dfcae3-486c-41ff-a6ed-74881f9e4e45
+		summarizeBy: none
+		sourceColumn: engagement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column staff_id
+		dataType: string
+		lineageTag: d138609a-78ce-48c6-b4dc-77a525da529e
+		summarizeBy: none
+		sourceColumn: staff_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column work_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 633949ac-b23f-4563-91d7-badd53839b54
+		summarizeBy: none
+		sourceColumn: work_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column entry_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: daa64a4d-d322-4ae2-bdb3-8e020fd5b3b8
+		summarizeBy: none
+		sourceColumn: entry_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column hours
+		dataType: double
+		formatString: #,0.00
+		lineageTag: d0a691ca-f062-424c-840c-7b5f19a16413
+		summarizeBy: none
+		sourceColumn: hours
+
+		annotation SummarizationSetBy = Automatic
+
+	column standard_rate
+		dataType: int64
+		formatString: \$#,0
+		lineageTag: 0cc2dc07-3bf7-4b12-945c-ea2f1ff4f967
+		summarizeBy: none
+		sourceColumn: standard_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	column standard_value
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 7a035598-a686-45e9-a4e6-854167c9892a
+		summarizeBy: none
+		sourceColumn: standard_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column entry_lag_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 12673ee4-70d4-4409-ad53-4e1407e4ab02
+		summarizeBy: none
+		sourceColumn: entry_lag_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column invoice_id
+		dataType: string
+		lineageTag: 1a238ccf-cea3-4244-a0a9-e37953a39562
+		summarizeBy: none
+		sourceColumn: invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column billed_value
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 8de5ca99-ae22-43da-82d0-fc0226f412d6
+		summarizeBy: none
+		sourceColumn: billed_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Entry Timeliness' =
+			SWITCH (
+			    TRUE (),
+			    time_entries[entry_lag_days] >= 30, "Very late (30+ days)",
+			    time_entries[entry_lag_days] >= 8, "Late (8-29 days)",
+			    "On time (0-7 days)"
+			)
+		dataType: string
+		lineageTag: fbbfebfe-22fc-4b1a-ac26-474effcdbbb6
+		summarizeBy: none
+		sortByColumn: 'Entry Timeliness Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Entry Timeliness Order' = SWITCH ( TRUE (), time_entries[entry_lag_days] >= 30, 3, time_entries[entry_lag_days] >= 8, 2, 1 )
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 42de974f-9bf6-4200-8000-f0e6f0979865
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'WIP Age Days' =
+			IF (
+			    ISBLANK ( time_entries[invoice_id] ),
+			    DATEDIFF ( time_entries[work_date], MAX ( time_entries[entry_date] ), DAY )
+			)
+		dataType: int64
+		formatString: 0
+		lineageTag: bc57f06f-a60c-4725-9bde-97f617c5773c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition time_entries = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "time_entries.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"entry_id", type text}, {"engagement_id", type text}, {"staff_id", type text}, {"work_date", type date}, {"entry_date", type date}, {"hours", type number}, {"standard_rate", Int64.Type}, {"standard_value", type number}, {"entry_lag_days", Int64.Type}, {"invoice_id", type text}, {"billed_value", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,83 @@
+table staff
+	lineageTag: a80b47e5-e96d-4fcf-861b-a268b84952b6
+
+	column staff_id
+		dataType: string
+		lineageTag: 19002c59-904a-4c6b-899a-5543657b5b39
+		summarizeBy: none
+		sourceColumn: staff_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column staff_name
+		dataType: string
+		lineageTag: 1b5cf440-1916-42f8-ba91-1f19666476d6
+		summarizeBy: none
+		sourceColumn: staff_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column email
+		dataType: string
+		lineageTag: 7445bd2e-bac8-41cd-a678-b891f3bbdb5d
+		summarizeBy: none
+		sourceColumn: email
+
+		annotation SummarizationSetBy = Automatic
+
+	column title
+		dataType: string
+		lineageTag: 45ba6b6d-20d8-4c2d-98e5-357998a0ffbe
+		summarizeBy: none
+		sourceColumn: title
+
+		annotation SummarizationSetBy = Automatic
+
+	column office
+		dataType: string
+		lineageTag: a6ea5ef3-5737-48dd-83b4-e22ac917a26b
+		summarizeBy: none
+		sourceColumn: office
+
+		annotation SummarizationSetBy = Automatic
+
+	column practice
+		dataType: string
+		lineageTag: 6970e749-c3b2-4fed-8b92-cb5623d1832b
+		summarizeBy: none
+		sourceColumn: practice
+
+		annotation SummarizationSetBy = Automatic
+
+	column standard_rate
+		dataType: int64
+		formatString: \$#,0
+		lineageTag: ed825401-98a8-46bd-9132-b5bb55c7869f
+		summarizeBy: none
+		sourceColumn: standard_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthly_target_hours
+		dataType: int64
+		formatString: 0
+		lineageTag: c69b33cc-d870-4d17-8a53-83ad90c5b2b3
+		summarizeBy: none
+		sourceColumn: monthly_target_hours
+
+		annotation SummarizationSetBy = Automatic
+
+	partition staff = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "staff.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"staff_id", type text}, {"staff_name", type text}, {"email", type text}, {"title", type text}, {"office", type text}, {"practice", type text}, {"standard_rate", Int64.Type}, {"monthly_target_hours", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

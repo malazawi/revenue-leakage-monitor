@@ -1,0 +1,74 @@
+table clients
+	lineageTag: 103d12da-1667-4a45-9509-66909b90017e
+
+	column client_id
+		dataType: string
+		lineageTag: d5b8c68c-3291-496b-aa17-29f44a9b6409
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: ba20f969-34b6-4292-91a1-02ccae3cd323
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column industry
+		dataType: string
+		lineageTag: b0e7512c-fdab-4e0b-93b7-e1f51db41004
+		summarizeBy: none
+		sourceColumn: industry
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 489fd267-b8a9-4d49-aa27-3f6aec6b1a07
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_terms_days
+		dataType: int64
+		formatString: 0
+		lineageTag: f70f74fe-b90a-4200-9eb3-db41418cdcf8
+		summarizeBy: none
+		sourceColumn: payment_terms_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column ap_contact_name
+		dataType: string
+		lineageTag: 91dc507f-23da-405e-97b4-8fee81349429
+		summarizeBy: none
+		sourceColumn: ap_contact_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column ap_contact_email
+		dataType: string
+		lineageTag: 35ea5a3c-8967-44dd-a702-fa2cdf8f323a
+		summarizeBy: none
+		sourceColumn: ap_contact_email
+
+		annotation SummarizationSetBy = Automatic
+
+	partition clients = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "clients.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"client_id", type text}, {"client_name", type text}, {"industry", type text}, {"region", type text}, {"payment_terms_days", Int64.Type}, {"ap_contact_name", type text}, {"ap_contact_email", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

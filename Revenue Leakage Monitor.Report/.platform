@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Revenue Leakage Monitor"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4d9c977c-6a3e-4d17-b184-27a8a0a6dead"
+  }
+}

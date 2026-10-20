@@ -1,0 +1,101 @@
+table payments
+	lineageTag: 12a69548-cca3-4106-8fdf-34c3e231b5f8
+
+	column payment_id
+		dataType: string
+		lineageTag: f538aadb-fde4-4ad3-993c-e46b6834a3c8
+		summarizeBy: none
+		sourceColumn: payment_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: string
+		lineageTag: 65248123-ccea-4bd6-9940-155e75d55e50
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column received_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: b94f4708-c6a9-4983-9ebe-cf9895499737
+		summarizeBy: none
+		sourceColumn: received_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column amount
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 90e4b0f0-c98a-46d2-95b0-2ff12adfc389
+		summarizeBy: none
+		sourceColumn: amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column remittance_invoice_id
+		dataType: string
+		lineageTag: e17fd59f-bb9b-4d59-9211-9d194d78c028
+		summarizeBy: none
+		sourceColumn: remittance_invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column applied_invoice_id
+		dataType: string
+		lineageTag: a7007c25-1f39-494d-973f-da04236c2594
+		summarizeBy: none
+		sourceColumn: applied_invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column applied_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 252a4dda-cf7c-4222-82f6-98360186087f
+		summarizeBy: none
+		sourceColumn: applied_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column method
+		dataType: string
+		lineageTag: 981505f3-c712-41f2-bcc9-cf1355e7220e
+		summarizeBy: none
+		sourceColumn: method
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Days To Apply' =
+			IF (
+			    ISBLANK ( payments[applied_date] ),
+			    DATEDIFF ( payments[received_date], MAX ( time_entries[entry_date] ), DAY ),
+			    DATEDIFF ( payments[received_date], payments[applied_date], DAY )
+			)
+		dataType: int64
+		formatString: 0
+		lineageTag: c5450ba0-ab1c-4f02-973e-79fe8ec844a1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition payments = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "payments.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"payment_id", type text}, {"client_id", type text}, {"received_date", type date}, {"amount", type number}, {"remittance_invoice_id", type text}, {"applied_invoice_id", type text}, {"applied_date", type date}, {"method", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

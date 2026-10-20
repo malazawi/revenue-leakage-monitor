@@ -1,0 +1,152 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1233.6578690412462,
+            "y": 561.164246023453
+          },
+          "nodeIndex": "_Measures",
+          "nodeLineageTag": "322444b5-bc3c-42ec-9c1a-65504ee37de2",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 677.7223787477468
+          },
+          "nodeIndex": "ar_exceptions",
+          "nodeLineageTag": "5b0ac406-d4c2-4d9d-9c20-b7e6a527fa20",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 929.26742670575277,
+            "y": 617.70837394245655
+          },
+          "nodeIndex": "clients",
+          "nodeLineageTag": "103d12da-1667-4a45-9509-66909b90017e",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 426.66453045272226,
+            "y": -50
+          },
+          "nodeIndex": "collections_log",
+          "nodeLineageTag": "4e5baf00-608f-47db-8dd2-4c9818ae0dda",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 713.14837056083513,
+            "y": 227.20559687410253
+          },
+          "nodeIndex": "Date",
+          "nodeLineageTag": "67ff0759-0d40-437f-afdf-d53361b4fac6",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 513.12496932870317,
+            "y": 528.54250721514143
+          },
+          "nodeIndex": "engagements",
+          "nodeLineageTag": "af2cb371-8a83-4b96-93a1-b05a9ca29556",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 225.904521204277,
+            "y": 227.24938892682371
+          },
+          "nodeIndex": "invoices",
+          "nodeLineageTag": "8b1c29b7-ced4-4e79-996c-a0435d9928c1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 999.65786904124616,
+            "y": 268.32195211379269
+          },
+          "nodeIndex": "payments",
+          "nodeLineageTag": "12a69548-cca3-4106-8fdf-34c3e231b5f8",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 261.37310385882722,
+            "y": 880.37712397789687
+          },
+          "nodeIndex": "staff",
+          "nodeLineageTag": "a80b47e5-e96d-4fcf-861b-a268b84952b6",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 547.69113072214714,
+            "y": 1072.3284920469059
+          },
+          "nodeIndex": "time_entries",
+          "nodeLineageTag": "f0fb5116-d640-4661-bd07-2164ff8b9c73",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

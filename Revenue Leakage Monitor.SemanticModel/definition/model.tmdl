@@ -1,0 +1,28 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DataFolder","staff","clients","engagements","time_entries","invoices","payments","collections_log","ar_exceptions"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table _Measures
+ref table staff
+ref table clients
+ref table engagements
+ref table time_entries
+ref table invoices
+ref table payments
+ref table collections_log
+ref table ar_exceptions
+ref table Date
+
+ref cultureInfo en-US
+

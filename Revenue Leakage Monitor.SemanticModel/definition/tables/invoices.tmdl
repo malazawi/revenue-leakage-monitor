@@ -1,0 +1,170 @@
+table invoices
+	lineageTag: 8b1c29b7-ced4-4e79-996c-a0435d9928c1
+
+	column invoice_id
+		dataType: string
+		lineageTag: 3653359d-dc52-4ac5-a652-7b8c568740fc
+		summarizeBy: none
+		sourceColumn: invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column engagement_id
+		dataType: string
+		lineageTag: 4823f81e-b01c-4e75-803a-37fce23e8e47
+		summarizeBy: none
+		sourceColumn: engagement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: string
+		lineageTag: 0e97ccb8-d530-4f38-b074-2d6bc1ab3eaf
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column invoice_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: bc188fb1-7f46-4148-a7af-ed6ef4d564a1
+		summarizeBy: none
+		sourceColumn: invoice_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column due_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: e456738d-5812-4a81-9416-de027dc8dd99
+		summarizeBy: none
+		sourceColumn: due_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column standard_value
+		dataType: double
+		formatString: \$#,0
+		lineageTag: b14df953-7bd8-4cf4-9786-150b9ac9502d
+		summarizeBy: none
+		sourceColumn: standard_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column invoice_amount
+		dataType: double
+		formatString: \$#,0
+		lineageTag: e9d93fde-fcf4-4066-a5e9-825fc4daf1b9
+		summarizeBy: none
+		sourceColumn: invoice_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column write_off_amount
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 7a0d55d4-cca2-447c-a727-5242e02a2855
+		summarizeBy: none
+		sourceColumn: write_off_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column write_off_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 4abfd9b6-305d-4f58-b41e-c5dd2c866a93
+		summarizeBy: none
+		sourceColumn: write_off_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column amount_applied
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 897705e7-fc6c-4a46-b126-6a08ef3937ac
+		summarizeBy: none
+		sourceColumn: amount_applied
+
+		annotation SummarizationSetBy = Automatic
+
+	column balance
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 976cea8e-c797-4ca7-8886-9c21653fe4a1
+		summarizeBy: none
+		sourceColumn: balance
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Days Outstanding' =
+			IF (
+			    invoices[balance] > 0,
+			    DATEDIFF ( invoices[invoice_date], MAX ( time_entries[entry_date] ), DAY )
+			)
+		dataType: int64
+		formatString: 0
+		lineageTag: ea93ba9b-0c36-4ae5-ba80-0ae1f06f71a3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'AR Aging Bucket' =
+			VAR d = invoices[Days Outstanding]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( d ), BLANK (),
+			        d <= 30, "0-30",
+			        d <= 60, "31-60",
+			        d <= 90, "61-90",
+			        d <= 120, "91-120",
+			        "120+"
+			    )
+		dataType: string
+		lineageTag: 6353beda-8ff1-496c-9b9e-9fa9a651043c
+		summarizeBy: none
+		sortByColumn: 'AR Aging Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'AR Aging Order' =
+			VAR d = invoices[Days Outstanding]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( d ), BLANK (), d <= 30, 1, d <= 60, 2, d <= 90, 3, d <= 120, 4, 5 )
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 25a5b3f1-d0ca-4584-94f3-2ab142dfc54a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition invoices = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "invoices.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // empty CSV cells become nulls before typing
+				    Blanks = Table.TransformColumns(Headers, {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"invoice_id", type text}, {"engagement_id", type text}, {"client_id", type text}, {"invoice_date", type date}, {"due_date", type date}, {"standard_value", type number}, {"invoice_amount", type number}, {"write_off_amount", type number}, {"write_off_date", type date}}, "en-US"),
+				    // cash applied to each invoice, from the payments query
+				    Applied = Table.Group(Table.SelectRows(payments, each [applied_invoice_id] <> null), {"applied_invoice_id"},
+				        {{"amount_applied", each List.Sum([amount]), type number}}),
+				    Joined = Table.NestedJoin(Typed, {"invoice_id"}, Applied, {"applied_invoice_id"}, "pay", JoinKind.LeftOuter),
+				    Expanded = Table.ExpandTableColumn(Joined, "pay", {"amount_applied"}),
+				    Zeros = Table.ReplaceValue(Expanded, null, 0, Replacer.ReplaceValue, {"amount_applied", "write_off_amount"}),
+				    // open balance = billed - applied cash - write-offs
+				    Balance = Table.AddColumn(Zeros, "balance", each Number.Round(List.Max({0, [invoice_amount] - [amount_applied] - [write_off_amount]}), 2), type number)
+				in
+				    Balance
+
+	annotation PBI_ResultType = Table
+
