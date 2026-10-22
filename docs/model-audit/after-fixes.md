@@ -2,7 +2,7 @@
 
 Compared with `baseline.md`. Fixes applied: #5 new measure, #3 write-off date relationship + `Write-offs`, #2 inactive `time_entries -> invoices` relationship, #1 report-only (interactions and labels).
 
-Live model: 12 relationships (10 before + 2 inactive), 23 measures (22 before + `Operational Realization`).
+Live model when this comparison was run: 12 relationships (10 before + 2 inactive), 23 measures (22 before + `Operational Realization`). Fix #2 was reverted afterwards (see Known side effects), so the final model has 11 relationships (one inactive).
 
 ## Diff summary
 
@@ -61,7 +61,7 @@ Write-offs now start in 2025-02 (about a year after the first invoices) instead 
 
 By practice: 89.6% (Operations Excellence) to 90.8% (Technology Advisory).
 
-## Fix #2 check
+## Fix #2 check (before it was reverted)
 
 The inactive `time_entries[invoice_id] -> invoices[invoice_id]` relationship loads without error. A test query using `USERELATIONSHIP` ran with no ambiguity error:
 - Billed time entries on invoices in the "120+" aging bucket: 2,719 rows.
@@ -72,4 +72,19 @@ Nothing in the report uses this relationship yet.
 ## New behaviour to be aware of
 
 1. **Blank Date row for `Write-offs`.** Because `Write-offs` now uses the write-off date, a query grouped by `Date` returns one extra blank-date row with `Write-offs` = $0 (invoices with no write-off date). It only shows if `Write-offs` is placed in a visual with a Date field. The report's Write-offs card has no date field, so nothing changes today.
-2. **Extra blank row for Practice and Fee type (unexplained).** A query that groups by `engagements[practice]` or `engagements[fee_type]` and includes a cash measure now returns an extra blank row carrying only the all-practice cash figure. The baseline run of the same queries had no such row, and the Industry query still has none. A data check found no orphan rows (no time entry or invoice with a missing engagement, no payment with a missing client), so the data did not cause it. The cause is not established. No current report visual pairs a cash measure with Practice or Fee type, so nothing visible is affected.
+2. **Extra blank row for Practice and Fee type.** A query that grouped by `engagements[practice]` or `engagements[fee_type]` and included a cash measure returned an extra blank row carrying only the all-practice cash figure. The baseline had no such row, and the Industry query never did. A data check found no orphan rows, so the data was not the cause. This was later traced to fix #2; see below.
+
+## Known side effects
+
+### Blank Date row from #3 (kept)
+`Write-offs` now uses the inactive `invoices[write_off_date] -> Date[Date]` relationship. Invoices with no write-off date (16,188 of 16,365; only 177 have one) fall on the blank member of `Date`, so any visual that puts `Write-offs` next to a Date field gets one extra blank-date row showing $0. The current report is not affected, because the Write-offs card has no date field. If you add a month chart of write-offs, filter the blank out (for example with a visual-level filter on the Date field).
+
+### Fix #2 reverted (inactive `time_entries[invoice_id] -> invoices[invoice_id]`)
+- **Why:** with this relationship in the model, queries by Practice or Fee type that included a cash measure gained an extra blank row (see item 2 above).
+- **Test:** after the revert and a refresh, `SUMMARIZECOLUMNS(engagements[practice], [Hours], [Cash Received])` returned 5 rows (no blank row), and the fee-type version returned 3. The blank row is gone, so fix #2 was the cause.
+- **Likely mechanism (inferred, not proven):** 5,453 of 188,806 time entries (the unbilled WIP, 16,865 hours) have a blank `invoice_id`. Blank keys on the "many" side land on a virtual blank member of the "one" side (`invoices`). The baseline had the same blank keys, so they only matter once the relationship exists. Why this surfaced as a blank Practice and Fee type row, but not a blank Industry row, was not established.
+- **Cost of the revert:** none today. No measure or visual used the relationship.
+- **If it is added again:** expect a blank `invoices` member holding the unbilled time. Re-run the Practice and Fee type check above before keeping it. Alternatives are a bridge or filtered key (for example a column that is blank-free for billed rows only) or doing the link inside a measure with `TREATAS`.
+
+### Cash cards
+The cash cards remain unaffected by the Practice and Fee type slicers. The report-level interactions and labels from #1 are separate from the model and unchanged by the revert. Verified in Power BI Desktop's UI: changing the Practice or Fee type slicer does not change the cash cards, and the new labels ("Unapplied cash 14+ days (all practices & fee types)" and "Cash application backlog (all practices & fee types)") fit.
