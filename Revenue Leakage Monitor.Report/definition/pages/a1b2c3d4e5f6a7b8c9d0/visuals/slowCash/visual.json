@@ -117,7 +117,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cash application backlog'"
+                  "Value": "'Cash application backlog (all practices & fee types)'"
                 }
               }
             },

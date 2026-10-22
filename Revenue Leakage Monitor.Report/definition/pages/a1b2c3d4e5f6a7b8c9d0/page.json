@@ -4,5 +4,11 @@
   "displayName": "Leakage Overview",
   "displayOption": "FitToPage",
   "height": 1080,
-  "width": 1920
+  "width": 1920,
+  "visualInteractions": [
+    { "source": "slcPractice", "target": "kpiUnapplied", "type": "NoFilter" },
+    { "source": "slcPractice", "target": "slowCash", "type": "NoFilter" },
+    { "source": "slcFee", "target": "kpiUnapplied", "type": "NoFilter" },
+    { "source": "slcFee", "target": "slowCash", "type": "NoFilter" }
+  ]
 }

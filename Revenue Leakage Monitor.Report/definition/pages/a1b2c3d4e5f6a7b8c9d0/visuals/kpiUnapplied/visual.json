@@ -28,7 +28,7 @@
               },
               "queryRef": "_Measures.Unapplied Cash 14+ Days",
               "nativeQueryRef": "Unapplied Cash 14+ Days",
-              "displayName": "Cash received, not applied 14+ days"
+              "displayName": "Unapplied cash 14+ days (all practices & fee types)"
             }
           ]
         }

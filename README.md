@@ -38,6 +38,22 @@ $1.4M of WIP is over 90 days old, concentrated in a few billing partners' engage
 
 **5. A cash-application backlog followed a system migration.**
 Payments taking 14+ days to apply jumped from about $0.15M in a normal month to about **$1.05M in both March and April 2026** (7x). $2.8M of cash is still unapplied after 14+ days, and $3.0M of AR is more than 90 days old.
+## AI-assisted model audit (Oct 2026)
+
+I connected Claude Code to the semantic model through Microsoft's Power BI Modeling MCP server
+and ran a governed audit: baseline DAX results first, one approved fix at a time, then a
+before/after diff of every measure.
+
+- **Fixed:** write-offs were reported in the invoice month, not the write-off month, which hid
+  $105K of October 2026 write-offs from trend views. Totals unchanged.
+- **Added:** Operational Realization, which excludes agreed discounts. Even after removing the
+  discounts the firm chose to give, fixed-fee work realizes only 71.8% vs 96.8% for hourly,
+  pointing to scope overruns rather than pricing.
+- **Caught and reverted:** a new relationship that passed review but added a blank Practice row
+  in testing. Documented and rolled back.
+
+All 21 original measures matched the baseline exactly. Full trail:
+[baseline](docs/model-audit/baseline.md) · [after fixes](docs/model-audit/after-fixes.md)
 
 ### How it's built
 - **Data model:** a star schema with 8 tables loaded from CSV through Power Query, a single `DataFolder` parameter, a marked Date table and 10 relationships.
