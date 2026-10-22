@@ -71,6 +71,12 @@ table _Measures
 		displayFolder: 2 Realization
 		lineageTag: 99132aa4-f9dc-4064-a0f0-88c072cba323
 
+	/// Billed value as a share of standard value after removing contractual discounts agreed up front. Isolates what was lost at billing (write-downs) from pricing decisions; compare with Billing Realization, which includes the agreed discounts.
+	measure 'Operational Realization' = DIVIDE ( [Billed Value], [Standard Value Billed] - [Agreed Discounts] )
+		formatString: 0.0%
+		displayFolder: 2 Realization
+		lineageTag: 3e7a1c52-8d4b-4f69-a2e5-6b0c9d17f8a4
+
 	/// Standard value of work done but not yet billed.
 	measure 'Unbilled WIP' = CALCULATE ( SUM ( time_entries[standard_value] ), ISBLANK ( time_entries[invoice_id] ) )
 		formatString: \$#,0
