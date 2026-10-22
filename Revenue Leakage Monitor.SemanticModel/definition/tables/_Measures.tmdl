@@ -114,7 +114,7 @@ table _Measures
 		lineageTag: d0f28e67-0fa7-43e6-98c2-5f26f87bf42a
 
 	/// Bad-debt write-offs (invoices written off after ~1 year unpaid).
-	measure Write-offs = SUM ( invoices[write_off_amount] )
+	measure Write-offs = CALCULATE ( SUM ( invoices[write_off_amount] ), USERELATIONSHIP ( invoices[write_off_date], 'Date'[Date] ) )
 		formatString: \$#,0
 		displayFolder: 4 Receivables
 		lineageTag: e5b07ed5-63f3-483b-819d-920b1b328a9c
