@@ -43,3 +43,8 @@ relationship 8f2d6a14-3b7c-4e90-b1a5-c47e0d93f6b2
 	fromColumn: invoices.write_off_date
 	toColumn: Date.Date
 
+relationship c1a94e7d-5f20-4b38-9d6e-2a7b8e03f154
+	isActive: false
+	fromColumn: time_entries.invoice_id
+	toColumn: invoices.invoice_id
+
