@@ -2,7 +2,7 @@
 
 **A Power BI dashboard that shows where a professional services firm loses money between work performed and cash collected, plus an n8n + AI agent that acts on it every morning.**
 
-Most dashboards stop at "here's the problem." This project goes one step further: the dashboard finds the leakage, and the agent works the receivables queue, drafting the follow-ups a collections team would otherwise write by hand.
+Most dashboards stop at "here's the problem." This project goes one step further: the dashboard finds the leakage, and the agent works the receivables queue, drafting the follow-ups a collections team would otherwise write by hand. Part 3 shows how I put an AI agent to work on the model itself, under human review, and tested whether it gives the right answers.
 
 ![Dashboard](Images/dashboard.png)
 
@@ -38,27 +38,11 @@ $1.4M of WIP is over 90 days old, concentrated in a few billing partners' engage
 
 **5. A cash-application backlog followed a system migration.**
 Payments taking 14+ days to apply jumped from about $0.15M in a normal month to about **$1.05M in both March and April 2026** (7x). $2.8M of cash is still unapplied after 14+ days, and $3.0M of AR is more than 90 days old.
-## AI-assisted model audit (Oct 2026)
-
-I connected Claude Code to the semantic model through Microsoft's Power BI Modeling MCP server
-and ran a governed audit: baseline DAX results first, one approved fix at a time, then a
-before/after diff of every measure.
-
-- **Fixed:** write-offs were reported in the invoice month, not the write-off month, which hid
-  $105K of October 2026 write-offs from trend views. Totals unchanged.
-- **Added:** Operational Realization, which excludes agreed discounts. Even after removing the
-  discounts the firm chose to give, fixed-fee work realizes only 71.8% vs 96.8% for hourly,
-  pointing to scope overruns rather than pricing.
-- **Caught and reverted:** a new relationship that passed review but added a blank Practice row
-  in testing. Documented and rolled back.
-
-All 21 original measures matched the baseline exactly. Full trail:
-[baseline](docs/model-audit/baseline.md) · [after fixes](docs/model-audit/after-fixes.md)
 
 ### How it's built
-- **Data model:** a star schema with 8 tables loaded from CSV through Power Query, a single `DataFolder` parameter, a marked Date table and 10 relationships.
+- **Data model:** a star schema with 8 tables loaded from CSV through Power Query, a single `DataFolder` parameter, a marked Date table and 11 relationships (one inactive, for dating write-offs).
 - **Power Query:** invoice balances are computed in M by joining applied payments and write-offs to invoices.
-- **DAX:** 22 documented measures in display folders (Time Entry, Realization, WIP, Receivables, Cash Application), plus calculated columns for aging buckets and entry timeliness.
+- **DAX:** 23 documented measures in display folders (Time Entry, Realization, WIP, Receivables, Cash Application), plus calculated columns for aging buckets and entry timeliness.
 - **Saved as PBIP:** the model (TMDL) and report (PBIR) are plain text, so every measure is readable and diffable on GitHub.
 
 ## Part 2: n8n Collections Agent
@@ -92,6 +76,33 @@ Every weekday morning, the agent:
 - **Fails safely:** OpenAI calls are rate-limited (one every 1.5 seconds), retried up to 3 times and time out after 30 seconds.
 - **Configurable:** thresholds, daily cap and model live in one Config node.
 
+## Part 3: AI on the model, governed and tested
+
+### AI-assisted model audit
+
+I connected Claude Code to the semantic model through Microsoft's Power BI Modeling MCP server
+and ran a governed audit: baseline DAX results first, one approved fix at a time, then a
+before/after diff of every measure.
+
+- **Fixed:** write-offs were reported in the invoice month, not the write-off month, which hid
+  $105K of October 2026 write-offs from trend views. Totals unchanged.
+- **Added:** Operational Realization, which excludes agreed discounts. Even after removing the
+  discounts the firm chose to give, fixed-fee work realizes only 71.8% vs 96.8% for hourly,
+  pointing to scope overruns rather than pricing.
+- **Caught and reverted:** a new relationship that passed review but added a blank Practice row
+  in testing. Documented and rolled back.
+
+All 21 original measures matched the baseline exactly. Full trail:
+[baseline](docs/model-audit/baseline.md) · [after fixes](docs/model-audit/after-fixes.md)
+
+### Talk-to-data agent: accuracy test
+
+I connected an AI agent to this model and tested it with 30 business questions,
+including trap questions the data can't answer. It scored **29/30** on the first
+run. The one miss was a disclosed estimate for a number the business doesn't
+track. One business rule fixed it: **30/30**, with every unanswerable question
+correctly refused. [Report card](docs/agent-eval/results.md)
+
 ## Repository structure
 
 ```
@@ -101,6 +112,10 @@ Revenue Leakage Monitor.Report/           ← report page and visuals (PBIR JSON
 n8n/collections_agent.json                ← import into n8n
 docs/business_rules.md                    ← rules for the dashboard and the agent
 docs/data_dictionary.md                   ← every table and column
+docs/model-audit/                         ← AI model audit: baseline and after-fixes diffs
+docs/agent-eval/                          ← agent accuracy test: answer key, runs, report card
+questions.md                              ← the 30 test questions
+CLAUDE.md                                 ← working rules for the AI agent in this repo
 data/                                     ← synthetic CSVs
 scripts/                                  ← data generator
 Images/                                   ← screenshots
@@ -118,7 +133,7 @@ The firm, Brightwater Advisory Partners, is fictional, and the data is synthetic
 
 ## Tools
 
-Power BI Desktop · Power Query (M) · DAX · TMDL / PBIR · n8n · OpenAI API · Google Sheets · Gmail · Git
+Power BI Desktop · Power Query (M) · DAX · TMDL / PBIR · n8n · OpenAI API · Claude Code · Power BI Modeling MCP · Google Sheets · Gmail · Git
 
 ---
 
